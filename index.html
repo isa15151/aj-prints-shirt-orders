@@ -1,0 +1,749 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A&J Prints Shirt Orders</title>
+<meta name="description" content="Order shirts for local pickup. Two designs available.">
+<style>
+:root{--ink:#111;--muted:#666;--line:#ddd;--card:#fff;--bg:#f6f6f6}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+.wrap{max-width:900px;margin:auto;padding:18px}
+.hero{background:#111;color:#fff;border-radius:22px;padding:24px 18px;text-align:center;margin:18px 0}
+.hero h1{margin:4px 0 8px;font-size:clamp(30px,6vw,48px)}
+.hero p{margin:0;color:#ddd}
+.company-logo-wrap{text-align:center;margin:0 auto 14px}
+.company-logo-link{display:block;text-decoration:none}
+.company-logo{display:block;width:min(100%,700px);max-height:280px;object-fit:contain;margin:0 auto}
+.facebook-page-button-wrap{text-align:center;margin:10px auto 22px}
+.facebook-page-button,.contact-button{display:inline-block;padding:11px 24px;border-radius:999px;text-decoration:none;font-weight:700;background:#1877f2;color:#fff}
+.facebook-page-button:hover,.contact-button:hover{opacity:.9}
+.contact-personalized{text-align:center;margin:22px auto 4px;padding:20px 16px;border-radius:14px;border:1px solid #ddd;max-width:700px;background:#fff;color:#111}
+.contact-personalized h2{margin:0 0 8px}
+.contact-personalized p{margin:0 auto 16px;line-height:1.5;color:#333}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;margin:16px 0;box-shadow:0 4px 18px rgba(0,0,0,.05)}
+h2{margin:0 0 14px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.product{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff}
+.product img{display:block;width:100%;aspect-ratio:1/1;object-fit:contain;background:#fafafa}
+.product .inside{padding:14px}
+.price{font-size:22px;font-weight:800}
+label{display:block;font-weight:700;margin:13px 0 6px}
+input,select{width:100%;padding:12px;border:1px solid #bbb;border-radius:10px;font-size:16px;background:#fff}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.total{font-size:25px;font-weight:900;text-align:right;margin-top:15px}
+.variant-list{display:flex;flex-direction:column;gap:12px}
+.shirt-option{border:1px solid #ddd;border-radius:12px;padding:12px;background:#fafafa}
+.option-heading{font-weight:900;margin-bottom:8px}
+.add-option-btn{width:100%;margin-top:12px}
+.remove-option-btn{margin-top:10px;padding:9px 12px;font-size:14px}
+.optional-label{font-weight:500;color:#777}
+
+.paygrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.pay{border:1px solid var(--line);border-radius:14px;padding:14px;text-align:center}
+.pay img{width:100%;max-width:180px;aspect-ratio:1/1;object-fit:contain;margin:auto;display:block}
+.pay b{display:block;margin:8px 0 3px}
+.pay a{display:inline-block;margin-top:8px;padding:10px 12px;border-radius:9px;background:#111;color:#fff;text-decoration:none;font-weight:700}
+.note{color:var(--muted);font-size:14px;line-height:1.45}
+.required-note{margin-top:-4px}
+button{border:0;border-radius:12px;padding:14px 18px;font-size:16px;font-weight:800;cursor:pointer;background:#111;color:#fff}
+button:disabled{opacity:.55;cursor:not-allowed}
+button.secondary{background:#eee;color:#111}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.continue-wrap{text-align:center;margin-top:20px}
+.continue-wrap button{min-width:250px}
+.step-status{background:#f2f7ff;border:1px solid #c9dcff;border-radius:12px;padding:12px 14px;margin-top:12px;color:#234;text-align:center}
+.order-number-panel{background:#f7f7f7;border:2px solid #111;border-radius:16px;padding:18px;text-align:center;margin:18px auto;max-width:680px}
+.order-number-label{font-size:13px;font-weight:900;letter-spacing:1.4px}
+.order-number-value{font-size:clamp(30px,8vw,46px);font-weight:950;letter-spacing:1px;margin-top:5px}
+.order-number-value{
+  overflow-wrap:anywhere;
+  word-break:break-word;
+  max-width:100%;
+  line-height:1.08;
+}
+.copy-btn{
+  margin-top:12px;
+  padding:10px 15px;
+  border-radius:10px;
+  background:#eee;
+  color:#111;
+  font-size:14px;
+}
+.copy-btn.copied{background:#111;color:#fff}
+.payment-summary{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin:14px 0;
+}
+.payment-summary>div{
+  border:1px solid #ddd;
+  border-radius:12px;
+  padding:12px;
+  text-align:center;
+  background:#fafafa;
+}
+.payment-summary .label{
+  font-size:13px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  color:#666;
+}
+.payment-summary .value{
+  font-size:24px;
+  font-weight:900;
+  margin-top:3px;
+  overflow-wrap:anywhere;
+}
+.return-reminder{
+  border:3px solid #111;
+  border-radius:14px;
+  padding:16px;
+  margin:18px 0;
+  text-align:center;
+  background:#fff;
+}
+.return-reminder h3{margin:0 0 8px;font-size:20px}
+.cashapp-tag{font-size:22px;font-weight:900;margin:4px 0}
+.cashapp-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+@media(max-width:700px){
+  .payment-summary{grid-template-columns:1fr}
+  .order-number-value{font-size:clamp(26px,7vw,38px)}
+}
+
+.cashapp-warning{border:3px solid #d97706;border-radius:12px;padding:16px;margin:14px auto 18px;background:#fff7ed;text-align:center;max-width:760px;font-size:16px;line-height:1.45}
+.cashapp-warning-title{font-weight:900;font-size:18px;margin-bottom:7px}
+.confirmation-box{background:#f8f8f8;border-radius:12px;padding:14px;border:1px solid #ddd}
+.confirmation-box input{font-weight:700}
+footer{text-align:center;color:#777;padding:18px}
+.hidden{display:none!important}
+@media(max-width:700px){
+  .grid,.row,.paygrid{grid-template-columns:1fr}
+  .wrap{padding:10px}
+  .hero{margin-top:10px;padding:18px 12px}
+  .company-logo{max-height:190px}
+  .card{padding:16px}
+  .total{text-align:left}
+  .actions button{width:100%}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<section class="hero">
+  <div class="company-logo-wrap">
+    <a href="https://www.facebook.com/share/1AzAwrGC9C/" target="_blank" rel="noopener noreferrer" class="company-logo-link" aria-label="Visit A&J Prints on Facebook">
+      <img src="images/company-logo.png" alt="A&J Prints" class="company-logo">
+    </a>
+  </div>
+  <div class="facebook-page-button-wrap">
+    <a href="https://www.facebook.com/share/1AzAwrGC9C/" target="_blank" rel="noopener noreferrer" class="facebook-page-button">Follow Us on Facebook</a>
+  </div>
+
+  <h1>Shirt Orders</h1>
+  <p>Choose your design • $30 each • Sizes Small–3XL • Local pickup</p>
+
+  <div class="contact-personalized">
+    <h2>Looking for a Personalized Shirt?</h2>
+    <p>Have a custom idea or want something made just for you? Contact us and we'll be happy to help!</p>
+    <a href="https://m.me/alyssa.calderon.1" target="_blank" rel="noopener noreferrer" class="contact-button">Contact Us</a>
+  </div>
+</section>
+
+<section class="card" id="step1">
+  <h2>1. Choose Your Shirt</h2>
+  <p class="note">Need more than one shirt of the same design with different sizes or colors? Use <strong>Add another option</strong> under that design.</p>
+
+  <div class="grid">
+    <div class="product">
+      <img src="images/design-1.png" alt="Polk Co Ryderz shirt design">
+      <div class="inside">
+        <h3>Polk Co Ryderz</h3>
+        <div class="price">$30 each</div>
+
+        <div class="variant-list" id="pcrOptions">
+          <div class="shirt-option" data-design="PCR">
+            <div class="option-heading">PCR shirt option 1</div>
+            <div class="row">
+              <div>
+                <label>Size</label>
+                <select class="shirt-size"><option value="">Select a size</option>
+<option>Small</option><option>Medium</option><option>Large</option>
+<option>XL</option><option>2XL</option><option>3XL</option></select>
+              </div>
+              <div>
+                <label>Shirt Color</label>
+                <select class="shirt-color"><option value="">Select a color</option>
+<option>White</option><option>Light Gray</option></select>
+              </div>
+            </div>
+            <label>Quantity</label>
+            <input class="shirt-qty" type="number" min="0" value="0" inputmode="numeric">
+          </div>
+        </div>
+
+        <button type="button" class="secondary add-option-btn" onclick="addShirtOption('PCR')">＋ Add another PCR shirt option</button>
+      </div>
+    </div>
+
+    <div class="product">
+      <img src="images/design-2.jpg" alt="Florida Ride Society shirt design">
+      <div class="inside">
+        <h3>Florida Ride Society</h3>
+        <div class="price">$30 each</div>
+
+        <div class="variant-list" id="frsOptions">
+          <div class="shirt-option" data-design="FRS">
+            <div class="option-heading">FRS shirt option 1</div>
+            <div class="row">
+              <div>
+                <label>Size</label>
+                <select class="shirt-size"><option value="">Select a size</option>
+<option>Small</option><option>Medium</option><option>Large</option>
+<option>XL</option><option>2XL</option><option>3XL</option></select>
+              </div>
+              <div>
+                <label>Shirt Color</label>
+                <select class="shirt-color"><option value="">Select a color</option>
+<option>White</option><option>Light Gray</option></select>
+              </div>
+            </div>
+            <label>Quantity</label>
+            <input class="shirt-qty" type="number" min="0" value="0" inputmode="numeric">
+          </div>
+        </div>
+
+        <button type="button" class="secondary add-option-btn" onclick="addShirtOption('FRS')">＋ Add another FRS shirt option</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="total">Order total: $<span id="total">0</span></div>
+</section>
+
+<section class="card" id="step2">
+  <h2>2. Your Information</h2>
+  <p class="note required-note">* Required fields</p>
+  <div class="row">
+    <div>
+      <label for="name">Name *</label>
+      <input id="name" autocomplete="name" placeholder="Your name">
+    </div>
+    <div>
+      <label for="phone">Phone number <span class="optional-label">(optional)</span></label>
+      <input id="phone" autocomplete="tel" placeholder="Best number for pickup updates">
+    </div>
+  </div>
+  <label for="fb">Facebook name/profile *</label>
+  <input id="fb" placeholder="So I know which Messenger account to contact">
+
+  <div class="continue-wrap">
+    <button id="continueToStep3Btn" type="button" onclick="createOrderNumber()">Continue to Payment</button>
+  </div>
+</section>
+
+<section class="card hidden" id="step3">
+  <h2>3. Your Confirmation / Order Number</h2>
+  <p class="note">Your unique confirmation/order number has been created. Keep this number — it will be used to match your payment to your order.</p>
+  <div class="order-number-panel">
+    <div class="order-number-label">YOUR CONFIRMATION / ORDER NUMBER</div>
+    <div id="orderNumberValue" class="order-number-value">AJ-00000000</div>
+    <button type="button" id="copyOrderNumberBtn" class="copy-btn" onclick="copyOrderNumber()">📋 Copy Order Number</button>
+  </div>
+  <div class="continue-wrap">
+    <button type="button" onclick="showStep4()">Continue to Pay for Your Order</button>
+  </div>
+</section>
+
+<section class="card hidden" id="step4">
+  <h2>4. Pay for Your Order</h2>
+
+  <div class="payment-summary">
+    <div>
+      <div class="label">Your Order Number</div>
+      <div class="value" id="paymentOrderNumber">AJ-00000000</div>
+    </div>
+    <div>
+      <div class="label">Your Total</div>
+      <div class="value">$<span id="paymentTotal">0</span></div>
+    </div>
+  </div>
+
+  <div class="return-reminder">
+    <h3>⚠️ ALMOST DONE!</h3>
+    <div>After you complete your payment, <strong>come back to this page</strong> to finish your order.</div>
+
+  <div class="cashapp-warning" role="alert">
+    <div class="cashapp-warning-title">⚠️ IMPORTANT — CASH APP PAYMENT NOTE</div>
+    <div><strong>If your order number does NOT automatically populate in the Cash App note field, you MUST enter your order number there manually.</strong> Your order number is listed in Step 3.</div>
+  </div>
+
+  <div class="paygrid">
+    <div class="pay">
+      <div class="cashapp-tag">$acalderon061118</div>
+      <div class="note">Cash App</div>
+      <img src="images/cashapp-qr.jpg" alt="Cash App QR code">
+      <b>Pay the exact total shown above</b>
+      <div class="cashapp-actions">
+        <a id="cashappLink" href="cashapp://cash.app/$acalderon061118" rel="noopener noreferrer">Open Cash App</a>
+        <button type="button" class="copy-btn" onclick="copyCashAppTag()">📋 Copy Cashtag</button>
+      </div>
+      <div class="note" style="margin-top:8px">
+        The payment link will include your exact order total. If Cash App does not open directly to the payment, search for <strong>$acalderon061118</strong> and enter the total shown above.
+      </div>
+    </div>
+
+    <div class="pay">
+      <div class="cashapp-tag">@acalderon061118</div>
+      <div class="note">Venmo</div>
+      <img src="images/venmo-qr.jpg" alt="Venmo QR code">
+      <b>Pay the exact total shown above</b>
+      <a id="venmoLink" href="https://venmo.com/u/acalderon061118" target="_blank" rel="noopener noreferrer">Open Venmo</a>
+      <div class="note" style="margin-top:8px">
+        The payment link attempts to include your exact total and order number in the payment note when supported by your device/app.
+      </div>
+    </div>
+  </div>
+<div style="margin-top:6px">Your order is <strong>NOT submitted</strong> until you tap <strong>“I've Paid — Submit Order”</strong> below.</div>
+  </div>
+
+  <label for="payment">Payment method *</label>
+  <select id="payment">
+    <option value="">Select payment method</option>
+    <option>Cash App</option>
+    <option>Venmo</option>
+  </select>
+
+  <div class="confirmation-box">
+    <label for="paymentConfirmation">Payment confirmation / reference *</label>
+    <input id="paymentConfirmation" placeholder="Your order number will appear here">
+    <div class="note" style="margin-top:7px">
+      <strong id="confirmationOrderHint">AJ-00000000</strong> is entered automatically. After you pay, add your payment confirmation/reference after your order number. <strong>Do not remove the order number.</strong>
+    </div>
+  </div>
+
+  <form id="shirtOrderForm" onsubmit="return false;">
+    <input type="hidden" name="order_number" id="formOrderNumber">
+    <input type="hidden" name="name" id="formName">
+    <input type="hidden" name="phone" id="formPhone">
+    <input type="hidden" name="facebook" id="formFacebook">
+    <input type="hidden" name="pcr_design" id="formPCR">
+    <input type="hidden" name="frs_design" id="formFRS">
+    <input type="hidden" name="total" id="formTotal">
+    <input type="hidden" name="payment_method" id="formPayment">
+    <input type="hidden" name="payment_confirmation" id="formPaymentConfirmation">
+    <input type="hidden" name="local_pickup" value="Yes">
+  </form>
+
+  <div class="continue-wrap">
+    <button id="submitOrderBtn" type="button" onclick="submitOrder()">I've Paid — Submit Order</button>
+  </div>
+  <div class="note" style="margin-top:10px;text-align:center">After you have paid and entered your payment confirmation/reference, this button submits your order directly to A&J Prints.</div>
+</section>
+
+
+
+<footer>Shirt orders • $30 each • Local pickup</footer>
+</div>
+
+<script>
+// Paste your deployed Google Apps Script Web App URL here.
+window.AJ_ORDER_ENDPOINT = "https://script.google.com/macros/s/AKfycbyiAIJKVqn8CBbrEHZ47pCP6sEvfhoe3EtU8bCPPeZWv7rNW3fuIxbQxjAYR_3SBg/exec";
+
+let orderNumber = "";
+
+const $ = (id) => document.getElementById(id);
+
+function optionRows(design) {
+  return Array.from(document.querySelectorAll('.shirt-option[data-design="' + design + '"]'));
+}
+
+function qtyFromRow(row) {
+  const input = row.querySelector(".shirt-qty");
+  return Math.max(0, parseInt(input?.value || "0", 10) || 0);
+}
+
+function orderTotal() {
+  let count = 0;
+  document.querySelectorAll(".shirt-option").forEach(row => {
+    count += qtyFromRow(row);
+  });
+  return count * 30;
+}
+
+function updateTotal() {
+  $("total").textContent = orderTotal();
+  updatePaymentLinks();
+}
+
+function addShirtOption(design) {
+  const container = design === "PCR" ? $("pcrOptions") : $("frsOptions");
+  const rows = optionRows(design);
+  const number = rows.length + 1;
+
+  const row = document.createElement("div");
+  row.className = "shirt-option";
+  row.dataset.design = design;
+  row.innerHTML = `
+    <div class="option-heading">${design} shirt option ${number}</div>
+    <div class="row">
+      <div>
+        <label>Size</label>
+        <select class="shirt-size">
+          <option value="">Select a size</option>
+          <option>Small</option><option>Medium</option><option>Large</option>
+          <option>XL</option><option>2XL</option><option>3XL</option>
+        </select>
+      </div>
+      <div>
+        <label>Shirt Color</label>
+        <select class="shirt-color">
+          <option value="">Select a color</option>
+          <option>White</option><option>Light Gray</option>
+        </select>
+      </div>
+    </div>
+    <label>Quantity</label>
+    <input class="shirt-qty" type="number" min="0" value="0" inputmode="numeric">
+    <button type="button" class="secondary remove-option-btn" onclick="removeShirtOption(this)">Remove this option</button>
+  `;
+  container.appendChild(row);
+
+  row.querySelector(".shirt-qty").addEventListener("input", updateTotal);
+  updateTotal();
+  row.scrollIntoView({behavior:"smooth", block:"center"});
+}
+
+function removeShirtOption(button) {
+  const row = button.closest(".shirt-option");
+  if (!row) return;
+  const container = row.parentElement;
+
+  // Always keep at least one option for each design.
+  if (container.querySelectorAll(".shirt-option").length === 1) {
+    row.querySelector(".shirt-size").value = "";
+    row.querySelector(".shirt-color").value = "";
+    row.querySelector(".shirt-qty").value = "0";
+  } else {
+    row.remove();
+    renumberOptions(container);
+  }
+  updateTotal();
+}
+
+function renumberOptions(container) {
+  Array.from(container.querySelectorAll(".shirt-option")).forEach((row, index) => {
+    const design = row.dataset.design;
+    const heading = row.querySelector(".option-heading");
+    if (heading) heading.textContent = `${design} shirt option ${index + 1}`;
+  });
+}
+
+function updatePaymentLinks() {
+  const total = orderTotal();
+  const cash = $("cashappLink");
+  const venmo = $("venmoLink");
+  const paymentTotal = $("paymentTotal");
+  const paymentOrderNumber = $("paymentOrderNumber");
+  const confirmationHint = $("confirmationOrderHint");
+
+  if (paymentTotal) paymentTotal.textContent = total;
+  if (paymentOrderNumber) paymentOrderNumber.textContent = orderNumber || "AJ-00000000";
+  if (confirmationHint) confirmationHint.textContent = orderNumber || "AJ-00000000";
+
+  if (!cash || !venmo) return;
+
+  if (total > 0) {
+    // Try the Cash App mobile deep link first. If the device/browser does not
+    // have Cash App installed or does not support the app scheme, fall back
+    // to Cash App's web payment page.
+    cash.href = "cashapp://cash.app/$acalderon061118/" + total;
+    cash.onclick = function(event) {
+      event.preventDefault();
+      const amount = orderTotal();
+      const appUrl = "cashapp://cash.app/$acalderon061118/" + amount;
+      const webUrl = "https://cash.app/$acalderon061118/" + amount;
+      let fallback = setTimeout(function() {
+        window.location.href = webUrl;
+      }, 1200);
+      const clearFallback = function() {
+        clearTimeout(fallback);
+        document.removeEventListener("visibilitychange", clearFallback);
+      };
+      document.addEventListener("visibilitychange", clearFallback);
+      window.location.href = appUrl;
+      return false;
+    };
+
+    const note = orderNumber
+      ? orderNumber + " - A&J Prints Shirt Order"
+      : "A&J Prints Shirt Order";
+
+    venmo.href =
+      "venmo://paycharge?txn=pay&recipients=acalderon061118&amount=" +
+      total + "&note=" + encodeURIComponent(note);
+
+    cash.style.opacity = "1";
+    venmo.style.opacity = "1";
+  } else {
+    cash.href = "https://cash.app/$acalderon061118";
+    venmo.href = "https://venmo.com/u/acalderon061118";
+    cash.style.opacity = ".65";
+    venmo.style.opacity = ".65";
+  }
+}
+
+function validateBasics() {
+  if (orderTotal() <= 0) {
+    alert("Please select at least one shirt first.");
+    return false;
+  }
+
+  if (!$("name").value.trim()) {
+    alert("Please enter your name.");
+    $("name").focus();
+    return false;
+  }
+
+  // Phone number is intentionally optional.
+  if (!$("fb").value.trim()) {
+    alert("Please enter your Facebook name or profile.");
+    $("fb").focus();
+    return false;
+  }
+
+  for (const row of document.querySelectorAll(".shirt-option")) {
+    const q = qtyFromRow(row);
+    if (q <= 0) continue;
+
+    const design = row.dataset.design === "PCR" ? "Polk Co Ryderz" : "Florida Ride Society";
+    const size = row.querySelector(".shirt-size").value;
+    const color = row.querySelector(".shirt-color").value;
+
+    if (!size) {
+      alert("Please choose a size for every shirt option in " + design + ".");
+      row.querySelector(".shirt-size").focus();
+      return false;
+    }
+
+    if (!color) {
+      alert("Please choose a shirt color for every shirt option in " + design + ".");
+      row.querySelector(".shirt-color").focus();
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function createOrderNumber() {
+  if (orderNumber) {
+    showOnly("step3");
+    scrollToSection("step3");
+    return;
+  }
+
+  if (!validateBasics()) return;
+
+  const button = $("continueToStep3Btn");
+  button.disabled = true;
+
+  try {
+    // Fully client-side order number: no server/function required.
+    // Timestamp + random suffix makes accidental duplicates extremely unlikely.
+    const now = new Date();
+    const stamp = [
+      now.getFullYear(),
+      String(now.getMonth() + 1).padStart(2, "0"),
+      String(now.getDate()).padStart(2, "0"),
+      String(now.getHours()).padStart(2, "0"),
+      String(now.getMinutes()).padStart(2, "0"),
+      String(now.getSeconds()).padStart(2, "0")
+    ].join("");
+    const random = Math.random().toString(36).slice(2, 7).toUpperCase();
+    orderNumber = `AJ-${stamp}-${random}`;
+
+    $("orderNumberValue").textContent = orderNumber;
+    $("paymentOrderNumber").textContent = orderNumber;
+    $("confirmationOrderHint").textContent = orderNumber;
+    $("paymentConfirmation").value = orderNumber;
+    $("formOrderNumber").value = orderNumber;
+
+    updatePaymentLinks();
+    showOnly("step3");
+    scrollToSection("step3");
+  } catch (error) {
+    console.error("Order number creation error:", error);
+    alert("We couldn't create your confirmation/order number. Please try again.");
+  } finally {
+    button.disabled = false;
+  }
+}
+function showStep4() {
+  if (!orderNumber) {
+    alert("Please create your confirmation/order number first.");
+    return;
+  }
+  updatePaymentLinks();
+
+  // Keep Step 3 visible so the customer can still see their order number
+  // while completing payment in Step 4.
+  $("step3").classList.remove("hidden");
+  $("step4").classList.remove("hidden");
+  scrollToSection("step4");
+}
+
+function showOnly(id) {
+  ["step3","step4"].forEach(step => $(step).classList.add("hidden"));
+  $(id).classList.remove("hidden");
+}
+
+function scrollToSection(id) {
+  setTimeout(() => $(id).scrollIntoView({behavior:"smooth", block:"start"}), 50);
+}
+
+function formatDesignOptions(design) {
+  const lines = [];
+  optionRows(design).forEach((row, index) => {
+    const q = qtyFromRow(row);
+    if (q <= 0) return;
+    const size = row.querySelector(".shirt-size").value;
+    const color = row.querySelector(".shirt-color").value;
+    lines.push(`Option ${index + 1}: Size ${size}, Color ${color}, Qty ${q}`);
+  });
+  return lines.length ? lines.join(" | ") : "None";
+}
+
+function fillOrderForm() {
+  $("formOrderNumber").value = orderNumber;
+  $("formName").value = $("name").value.trim();
+  $("formPhone").value = $("phone").value.trim();
+  $("formFacebook").value = $("fb").value.trim();
+
+  $("formPCR").value = formatDesignOptions("PCR");
+  $("formFRS").value = formatDesignOptions("FRS");
+
+  $("formTotal").value = "$" + orderTotal();
+  $("formPayment").value = $("payment").value;
+  $("formPaymentConfirmation").value = $("paymentConfirmation").value.trim();
+}
+
+async function submitOrder() {
+  if (!orderNumber) {
+    alert("Please create your confirmation/order number first.");
+    return;
+  }
+  if (!$("payment").value) {
+    alert("Please select your payment method.");
+    $("payment").focus();
+    return;
+  }
+  if (!$("paymentConfirmation").value.trim()) {
+    alert("Please enter your payment confirmation/reference.");
+    $("paymentConfirmation").focus();
+    return;
+  }
+
+  fillOrderForm();
+
+  const button = $("submitOrderBtn");
+  button.disabled = true;
+  button.textContent = "Submitting Order...";
+
+  const endpoint = window.AJ_ORDER_ENDPOINT || "";
+  if (!endpoint) {
+    alert("The order form is not connected yet. Please contact A&J Prints.");
+    button.disabled = false;
+    button.textContent = "I've Paid — Submit Order";
+    return;
+  }
+
+  const payload = new URLSearchParams();
+  ["order_number","name","phone","facebook","pcr_design","frs_design","total","payment_method","payment_confirmation","local_pickup"].forEach(name => {
+    const field = document.querySelector(`[name="${name}"]`);
+    if (field) payload.append(name, field.value);
+  });
+
+  try {
+    // no-cors lets a static site submit to the Google Apps Script web app
+    // without requiring a paid server or Netlify function. The script emails
+    // the order and stores it in Google Sheets.
+    await fetch(endpoint, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {"Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"},
+      body: payload.toString()
+    });
+
+    window.location.href = "order-submitted.html?order=" + encodeURIComponent(orderNumber);
+  } catch (error) {
+    console.error("Order submission error:", error);
+    alert("We couldn't submit your order. Please check your internet connection and try again.");
+    button.disabled = false;
+    button.textContent = "I've Paid — Submit Order";
+  }
+}
+async function copyOrderNumber() {
+  if (!orderNumber) return;
+  try {
+    await navigator.clipboard.writeText(orderNumber);
+  } catch (e) {
+    const ta = document.createElement("textarea");
+    ta.value = orderNumber;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    ta.remove();
+  }
+  const btn = $("copyOrderNumberBtn");
+  if (btn) {
+    const original = btn.textContent;
+    btn.textContent = "✓ Order Number Copied";
+    btn.classList.add("copied");
+    setTimeout(() => {
+      btn.textContent = original;
+      btn.classList.remove("copied");
+    }, 1800);
+  }
+}
+
+async function copyCashAppTag() {
+  const tag = "$acalderon061118";
+  try {
+    await navigator.clipboard.writeText(tag);
+  } catch (e) {
+    const ta = document.createElement("textarea");
+    ta.value = tag;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    ta.remove();
+  }
+  alert("Cash App tag copied: " + tag);
+}
+
+function openMessenger() {
+  window.open("https://m.me/alyssa.calderon.1", "_blank", "noopener");
+}
+
+document.querySelectorAll(".shirt-qty").forEach(input => {
+  input.addEventListener("input", updateTotal);
+});
+
+$("payment").addEventListener("change", updatePaymentLinks);
+
+$("paymentConfirmation").addEventListener("input", function() {
+  // Keep the order number available if a customer accidentally clears the field.
+  // They can still add their actual payment reference after it.
+  if (!this.value.trim() && orderNumber) this.value = orderNumber;
+});
+
+updateTotal();
+</script>
+</body>
+</html>
